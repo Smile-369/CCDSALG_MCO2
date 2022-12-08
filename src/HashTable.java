@@ -5,9 +5,10 @@
 
 //Java program to demonstrate implementation of our
 //own hash table with chaining for collision detection
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Objects;
-
+import java.util.zip.CRC32;
 
 //Class to represent entire hash table
 class Map<K, V> {
@@ -22,7 +23,7 @@ class Map<K, V> {
 
 	// Constructor (Initializes capacity, size and
 	// empty chains.
-	public Map()
+	public Map(int numBuckets)
 	{
 		bucketArray = new ArrayList<>();
 		this.numBuckets = numBuckets;
@@ -37,49 +38,43 @@ class Map<K, V> {
 	public boolean isEmpty() { return size() == 0; }
 	
 	
-	//======================================
+	//=========================================================HERE=============
 	
 	
-	//THIS IS THE PART WHERE THE HASH CODE COMES IN
+	//THIS IS THE PART WHERE THE OTHER HASH CODE COMES IN
+	//probs put it in as another method
 	private final int hashCode (K key) {
 		return Objects.hashCode(key);
 	}
 
-	
-	private final int hashFNV(K key) {
-		
-		/* DIS FROM THE VID
-		uint32_t fnv1a32(const char *data, size_t len) {
-			uint32_t hash = 2166136261;
-			for (char *byte = data; byte < (data+len); byte++) {
-				hash ^= *byte;
-				hash *= 16777619;
-			}
-			return hash;
-		}
-		*/
-		return -1;
-	}
-		
-	private final int hashCRC32(K key) {
-			
-		/* THIS FROM THE VIDEO
-		static const uint32_t crc32tab[256] = {/*....**};
-		
-		uint32_t crc32(const char *data, size_t len) {
-			uint32_t crc = 0xffffffff;
-			const char *ptr;
-			
-			for (ptr = data; ptr < (data + len); ptr++) {
-				crc = (crc >> 8) ^ crc32tab[(crc ^ (*ptr)) & 0xff];
-			}
-			return crc;
-		}
-		*/
-		return -1;
+	//FNV1A HASH FUNCTION
+	private final int hashFNV(String key) {
+		final int FNV_32_INIT = 0x811c9dc5;
+	    final int FNV_32_PRIME = 0x01000193;
+	    
+	    byte[] keyInBytes = key.getBytes(StandardCharsets.UTF_8);
+	    
+	    int rv = FNV_32_INIT;
+        final int len = keyInBytes.length;
+        for(int i = 0; i < len; i++) {
+            rv ^= keyInBytes[i];
+            rv *= FNV_32_PRIME;
+        }
+		return rv;
 	}
 	
-	//========================================
+	//CRC32 HASH FUNCTION
+	private final int hashCRC32(String key) {
+		int crc;
+	    CRC32 myCRC = new CRC32( ) ;
+	    myCRC.update( key.getBytes( ) ) ;
+	    //System.out.println( "The CRC-32 value is : " + Long.toHexString( myCRC.getValue( ) ) + " !" ) ;
+	  	crc = (int) myCRC.getValue();
+	  	return crc;
+	}
+	
+	
+	//============================================================================
 	
 	
 	
@@ -87,7 +82,7 @@ class Map<K, V> {
 	// for a key
 	private int getBucketIndex(K key)
 	{
-		int hashCode = hashCode(key); //hashFNV(key) or hashCRC32(key)
+		int hashCode = hashCode(key);
 		int index = hashCode % numBuckets;
 		// key.hashCode() could be negative.
 		index = index < 0 ? index * -1 : index;
@@ -99,7 +94,7 @@ class Map<K, V> {
 	{
 		// Apply hash function to find index for given key
 		int bucketIndex = getBucketIndex(key);
-		int hashCode = hashCode(key); //hashFNV(key) or hashCRC32(key)
+		int hashCode = hashCode(key);
 		// Get head of chain
 		HashNode<K, V> head = bucketArray.get(bucketIndex);
 
@@ -136,7 +131,7 @@ class Map<K, V> {
 	{
 		// Find head of chain for given key
 		int bucketIndex = getBucketIndex(key);
-		int hashCode = hashCode(key); //hashFNV(key) or hashCRC32(key)
+		int hashCode = hashCode(key);
 	
 		HashNode<K, V> head = bucketArray.get(bucketIndex);
 
@@ -156,13 +151,13 @@ class Map<K, V> {
 	{
 		// Find head of chain for given key
 		int bucketIndex = getBucketIndex(key);
-		int hashCode = hashCode(key); //hashFNV(key) or hashCRC32(key)
+		int hashCode = hashCode(key);
 		HashNode<K, V> head = bucketArray.get(bucketIndex);
 
 		// Check if key is already present
 		while (head != null) {
 			if (head.key.equals(key) && head.hashCode == hashCode) {
-				head.value = value;
+				head.value = value; //change to head.value += value;?=============================here=====
 				return;
 			}
 			head = head.next;
@@ -176,28 +171,13 @@ class Map<K, V> {
 		newNode.next = head;
 		bucketArray.set(bucketIndex, newNode);
 
-		// If load factor goes beyond threshold, then
-		// double hash table size
-		if ((1.0 * size) / numBuckets >= 0.7) {
-			ArrayList<HashNode<K, V> > temp = bucketArray;
-			bucketArray = new ArrayList<>();
-			numBuckets = 2 * numBuckets;
-			size = 0;
-			for (int i = 0; i < numBuckets; i++)
-				bucketArray.add(null);
-
-			for (HashNode<K, V> headNode : temp) {
-				while (headNode != null) {
-					add(headNode.key, headNode.value);
-					headNode = headNode.next;
-				}
 			}
-		}
-	}
 
 	// Driver method to test Map class
 	public static void main(String[] args)
 	{
+		//================================================================HERE
+		//search later on which java lib Map<>() is in
 		Map<String, Integer> map = new Map<>();
 		map.add("this", 1);
 		map.add("coder", 2);
