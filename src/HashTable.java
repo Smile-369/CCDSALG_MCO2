@@ -22,7 +22,7 @@ class Map<K, V> {
 
 	// Constructor (Initializes capacity, size and
 	// empty chains.
-	public Map(int numBuckets)
+	public Map()
 	{
 		bucketArray = new ArrayList<>();
 		this.numBuckets = numBuckets;

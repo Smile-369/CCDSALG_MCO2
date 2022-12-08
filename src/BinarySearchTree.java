@@ -1,6 +1,15 @@
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+
 public class BinarySearchTree {
+    long startTime = System.currentTimeMillis();
+
+    long endTime;
     private class Node {
         String value;
+
         int count;
         Node left, right;
 
@@ -13,9 +22,14 @@ public class BinarySearchTree {
     private Node root;
 
     public void create(String[] values) {
+        startTime = System.currentTimeMillis();
+
         for (String value : values) {
             insert(value);
         }
+        endTime= System.currentTimeMillis();
+        long elapsedTime=endTime-startTime;
+        System.out.println("Create "+elapsedTime+"ms");
     }
     public void create() {
         root = null;
@@ -32,7 +46,11 @@ public class BinarySearchTree {
     }
 
     private Node insert(Node node, String value) {
+
+
         if (node == null) {
+
+
             return new Node(value);
         }
 
@@ -44,10 +62,13 @@ public class BinarySearchTree {
             node.count++;
         }
 
+
+
         return node;
     }
 
     public boolean contains(String value) {
+        startTime = System.currentTimeMillis();
         return contains(root, value);
     }
 
@@ -57,6 +78,9 @@ public class BinarySearchTree {
         }
 
         if (value.equals(node.value)) {
+            endTime= System.currentTimeMillis();
+            long elapsedTime=endTime-startTime;
+            System.out.println("Counts "+elapsedTime+"ms");
             return true;
         } else if (value.compareTo(node.value) < 0) {
             return contains(node.left, value);
@@ -72,23 +96,43 @@ public class BinarySearchTree {
         if (node == null) {
             return;
         }
-
         displayInOrder(node.left);
         System.out.print(node.value + " ");
         displayInOrder(node.right);
     }
-    public void displayCounts() {
-        displayCounts(root);
+    public void displayCounts(String filePath) {
+        try {
+            BufferedWriter out = new BufferedWriter(new FileWriter(filePath));
+            displayCounts(root,out);
+            out.close();
+        } catch (IOException e) {
+        }
+
+    }
+    public static void createFile(String Name) {
+        try {
+            File file = new File(String.format("%s.txt",Name));
+            if (file.createNewFile()) {
+                System.out.println("File created: " + file.getName());
+            } else {
+                System.out.println("File already exists.");
+            }
+        } catch (IOException e) {
+            System.out.println("An error occurred.");
+            e.printStackTrace();
+        }
     }
 
-    private void displayCounts(Node node) {
+
+    private void displayCounts(Node node,BufferedWriter out) throws IOException {
+
         if (node == null) {
             return;
         }
+        displayCounts(node.left,out);
+            out.write(node.value + ": " + node.count+"\n");
+        displayCounts(node.right,out);
 
-        displayCounts(node.left);
-        System.out.println(node.value + ": " + node.count);
-        displayCounts(node.right);
     }
 
 }
