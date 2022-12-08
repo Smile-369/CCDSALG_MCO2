@@ -12,6 +12,7 @@ import java.util.zip.CRC32;
 
 //Class to represent entire hash table
 class Map<K, V> {
+
 	// bucketArray is used to store array of chains
 	private ArrayList<HashNode<K, V> > bucketArray;
 
@@ -129,6 +130,7 @@ class Map<K, V> {
 	// Returns value for a key
 	public V get(K key)
 	{
+		long startTime=System.nanoTime();
 		// Find head of chain for given key
 		int bucketIndex = getBucketIndex(key);
 		int hashCode = hashCode(key);
@@ -137,8 +139,12 @@ class Map<K, V> {
 
 		// Search key in chain
 		while (head != null) {
-			if (head.key.equals(key) && head.hashCode == hashCode)
+			if (head.key.equals(key) && head.hashCode == hashCode) {
+				long endTime=System.nanoTime();
+				long elapsedTime=endTime-startTime;
+				System.out.println(elapsedTime);
 				return head.value;
+			}
 			head = head.next;
 		}
 
@@ -172,21 +178,35 @@ class Map<K, V> {
 		bucketArray.set(bucketIndex, newNode);
 
 			}
-
 	// Driver method to test Map class
+	public void create(){
+		Map<String, Integer> map = new Map<>(0);
+	}
+	public static void create(String[] input,Map map){
+		for(int i = 0 ; i < input.length;i++){
+			map.add(input[i],i);
+		}
+	}
 	public static void main(String[] args)
 	{
 		//================================================================HERE
 		//search later on which java lib Map<>() is in
-		Map<String, Integer> map = new Map<>();
-		map.add("this", 1);
-		map.add("coder", 2);
-		map.add("this", 4);
-		map.add("hi", 5);
+		Substring sns =new Substring();
+		String thing=sns.createRandomString((int)Math.pow(10,4));
+		Map<String, Integer> map = new Map<>(thing.length());
+//		map.add("this", 1);
+//		map.add("coder", 2);
+//		map.add("this", 4);
+//		map.add("hi", 5);
+//		;
+		String[] input = sns.kmerArrayCreation(thing,6);
+		Map.create(input,map);
 		System.out.println(map.size());
 		System.out.println(map.remove("this"));
+		System.out.println(map.remove(input[2]));
 		System.out.println(map.remove("this"));
 		System.out.println(map.size());
 		System.out.println(map.isEmpty());
+		System.out.println(map.get(input[23]));
 	}
 }

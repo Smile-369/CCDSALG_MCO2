@@ -41,7 +41,6 @@ public class BinarySearchTree {
     }
 
     public void insert(String value) {
-
         root = insert(root, value);
     }
 
