@@ -48,8 +48,6 @@ public class BinarySearchTree {
 
 
         if (node == null) {
-
-
             return new Node(value);
         }
 
@@ -67,7 +65,7 @@ public class BinarySearchTree {
     }
 
     public boolean contains(String value) {
-        startTime = System.currentTimeMillis();
+        startTime = System.nanoTime();
         return contains(root, value);
     }
 
@@ -77,9 +75,9 @@ public class BinarySearchTree {
         }
 
         if (value.equals(node.value)) {
-            endTime= System.currentTimeMillis();
+            endTime= System.nanoTime();
             long elapsedTime=endTime-startTime;
-            System.out.println("Counts "+elapsedTime+"ms");
+            System.out.println("search "+elapsedTime+"ns");
             return true;
         } else if (value.compareTo(node.value) < 0) {
             return contains(node.left, value);
@@ -87,22 +85,11 @@ public class BinarySearchTree {
             return contains(node.right, value);
         }
     }
-    public void displayInOrder() {
-        displayInOrder(root);
-    }
 
-    private void displayInOrder(Node node) {
-        if (node == null) {
-            return;
-        }
-        displayInOrder(node.left);
-        System.out.print(node.value + " ");
-        displayInOrder(node.right);
-    }
-    public void displayCounts(String filePath) {
+    public void writeCountstoFile(String filePath) {
         try {
             BufferedWriter out = new BufferedWriter(new FileWriter(filePath));
-            displayCounts(root,out);
+            writeCountsToFile(root,out);
             out.close();
         } catch (IOException e) {
         }
@@ -123,14 +110,14 @@ public class BinarySearchTree {
     }
 
 
-    private void displayCounts(Node node,BufferedWriter out) throws IOException {
+    private void writeCountsToFile(Node node,BufferedWriter out) throws IOException {
 
         if (node == null) {
             return;
         }
-        displayCounts(node.left,out);
+        writeCountsToFile(node.left,out);
             out.write(node.value + ": " + node.count+"\n");
-        displayCounts(node.right,out);
+        writeCountsToFile(node.right,out);
 
     }
 
