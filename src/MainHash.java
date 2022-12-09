@@ -22,7 +22,8 @@ public class MainHash {
 	  	String input = Substring.createRandomString((int)Math.pow(10,n));
 	  	String[] kmerArray = Substring.kmerArrayCreation(input, k);
 	  	Map<String, Integer> map = new Map<>(input.length());
-	  	map.create(kmerArray,map,choice);
+	  	int collision = map.create(kmerArray,map,choice);
+	  	
 	  	
 	  	try {
 	        FileWriter fileWriter = new FileWriter("HashTables.txt");
@@ -37,13 +38,8 @@ public class MainHash {
 	        System.out.println("An error occurred.");
 	        e.printStackTrace();
 	      }
-	  	
-		for (int i=0; i<map.size(); i++) {
-			if(map.get(kmerArray[i], choice) != -1)
-				System.out.println(kmerArray[i]+ " = " + map.get(kmerArray[i], choice));
-		}
 		
-		System.out.println(map.isEmpty());
+		System.out.println("The number of collisions is " + collision);
 		
 	}
 }
