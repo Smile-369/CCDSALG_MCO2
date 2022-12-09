@@ -7,9 +7,15 @@
 
 //Java program to demonstrate implementation of our
 //own hash table with chaining for collision detection
+import java.io.BufferedWriter;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
+import java.util.HashMap;
+
 import java.util.Objects;
+import java.util.Set;
 import java.util.zip.CRC32;
 
 //Class to represent entire hash table
@@ -19,6 +25,7 @@ class Map<K, V> {
 
 	// Current capacity of array list
 	private int numBuckets;
+	public int collisions;
 
 	// Current size of array list
 	private int size;
@@ -126,7 +133,7 @@ class Map<K, V> {
 			if (head.key.equals(key) && head.hashCode == hashCode) {
 				long endTime=System.nanoTime();
 				long elapsedTime=endTime-startTime;
-				System.out.println("get "+elapsedTime+"ns");
+//				System.out.println("get "+elapsedTime+"ns");
 				return head.value;
 			}
 				
@@ -141,7 +148,6 @@ class Map<K, V> {
 	public void add(K key, int value, int choice)
 	{
 		long startTime=System.nanoTime();
-
 		// Find head of chain for given key
 		int bucketIndex = getBucketIndex(key, choice);
 		int hashCode = hashCode(key, choice);
@@ -149,46 +155,58 @@ class Map<K, V> {
 
 		// Check if key is already present
 		while (head != null) {
+//			if (!(head.key.equals(key)))
+				collisions++;
 			if (head.key.equals(key) && head.hashCode == hashCode) {
-				head.value += value; //change to head.value += value;?=============================here=====
-				
+				head.value += value;
 				long endTime=System.nanoTime();
 				long elapsedTime=endTime-startTime;
-//				System.out.println("Add"+elapsedTime+"ns");
-				
+//				System.out.println(elapsedTime+"ns");
+
 				return;
 			}
+
 			head = head.next;
 		}
 
 		startTime=System.nanoTime();
-		
+
 		// Insert key in chain
 		size++;
 		head = bucketArray.get(bucketIndex);
 		HashNode<K, Integer> newNode
-			= new HashNode<K, Integer>(key, value, hashCode);
+				= new HashNode<K, Integer>(key, value, hashCode);
 		newNode.next = head;
 		bucketArray.set(bucketIndex, newNode);
-		
+
 		long endTime=System.nanoTime();
 		long elapsedTime=endTime-startTime;
-//		System.out.println("insert in chain "+elapsedTime+"ns");
-		
-			}
+//		System.out.println("add"+ elapsedTime+"ns");
+
+	}
+	public void writeCountsToFile( String output,Map map,String[] input,int choice) throws IOException {
+
+		BufferedWriter bw = new BufferedWriter(new FileWriter(output));
+		for (int i=0; i<map.size(); i++) {
+			if(map.get(input[i], choice) != -1)
+				bw.write(input[i]+ " = " + map.get(input[i], choice)+"\n");
+		}
+		bw.close();
+
+	}
 	public void create(){
 		Map<String, Integer> map = new Map<>(0);
 	}
 	public void create(String[] input, Map<String, Integer> map, int choice){
 		long startTime=System.currentTimeMillis();
-		
 		for(int i = 0 ; i < input.length;i++){
 			map.add(input[i],1,choice);
 		}
 
 		long endTime=System.currentTimeMillis();
 		long elapsedTime=endTime-startTime;
-		System.out.println("Create "+elapsedTime+"ms");
+		System.out.println(elapsedTime+"ms");
+
 	}
 
 }

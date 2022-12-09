@@ -95,19 +95,6 @@ public class BinarySearchTree {
         }
 
     }
-    public static void createFile(String Name) {
-        try {
-            File file = new File(String.format("%s.txt",Name));
-            if (file.createNewFile()) {
-                System.out.println("File created: " + file.getName());
-            } else {
-                System.out.println("File already exists.");
-            }
-        } catch (IOException e) {
-            System.out.println("An error occurred.");
-            e.printStackTrace();
-        }
-    }
 
 
     private void writeCountsToFile(Node node,BufferedWriter out) throws IOException {

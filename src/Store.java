@@ -1,4 +1,5 @@
 import java.io.IOException;
+import java.util.Set;
 
 public class Store {
     static Substring kmer=new Substring();
@@ -11,38 +12,33 @@ public class Store {
             for(int j = 5;j<8;j++){
                 System.out.println();
                 String[] test = kmer.kmerArrayCreation(kmer.createRandomString((int) Math.pow(10, i)), j);
-                Map<String, Integer> map1= new Map<>(test.length),map2= new Map<>(test.length),map3 = new Map<>(test.length);
-                bst.createFile(String.format("Output n=10^%d k=%d",i,j));
+                Map<String, Integer> map2= new Map<>(test.length),map3 = new Map<>(test.length);
                 System.out.println("n="+i+" k="+j);
                 System.out.println();
                 System.out.println("BST");
                 bst.create(test);
                 System.out.println(bst.contains(test[45]));
                 System.out.println();
-                System.out.println("Built in");
-                map1.create(test,map1,1);
-                map1.get(test[45],1);
                 System.out.println();
-                System.out.println("KNV");
+                System.out.println("fnv");
                 map2.create(test,map2,2);
+                System.out.println(map2.collisions);
                 map2.get(test[45],2);
-                System.out.println();
-                System.out.println("CRC");
-                map3.create(test,map3,3);
-                map3.get(test[45],3);
+                map2.writeCountsToFile(String.format("Output n=10^%d k=%d fnv.txt",i,j),map2,test,3);
 
-                bst.writeCountstoFile(String.format("Output n=10^%d k=%d.txt",i,j));
+                System.out.println();
+                System.out.println("crc");
+                map3.create(test,map3,3);
+                System.out.println(map3.collisions);
+                map3.get(test[45],3);
+                map3.writeCountsToFile(String.format("Output n=10^%d k=%d crc.txt",i,j),map3,test,3);
+                bst.writeCountstoFile(String.format("Output n=10^%d k=%d bst.txt",i,j));
                 bst.destroy();
             }
         }
-        String input = Substring.createRandomString((int)Math.pow(10,4));
-        String[] kmerArray = Substring.kmerArrayCreation(input, 5);
 
 
-//        map.create(test);
-//        System.out.println(map.get(test[1]));
-//        bst.displayInOrder();
-//        System.out.println();
+
 
     }
 }
