@@ -49,7 +49,7 @@ class Map<K, V> {
 			
 			long endTime=System.nanoTime();
 			long elapsedTime=endTime-startTime;
-//			System.out.println("Built in "+elapsedTime+"ns");
+			System.out.println(elapsedTime+"ns");
 			
 			return Objects.hashCode(key);
 			
@@ -68,7 +68,7 @@ class Map<K, V> {
 	        
 	        endTime=System.nanoTime();
 			elapsedTime=endTime-startTime;
-//			System.out.println("FNV "+elapsedTime+"ns");
+			System.out.println(elapsedTime+"ns");
 			
 			return rv;
 			
@@ -80,13 +80,13 @@ class Map<K, V> {
 		  	
 		  	endTime=System.nanoTime();
 			elapsedTime=endTime-startTime;
-//			System.out.println("CRC "+elapsedTime+"ns");
+			System.out.println(elapsedTime+"ns");
 			
 		  	return crc;
 		default: 
 			endTime=System.nanoTime();
 			elapsedTime=endTime-startTime;
-//			System.out.println("default "+elapsedTime+"ns");
+			System.out.println(elapsedTime+"ns");
 			
 			return 0;
 		}
@@ -97,16 +97,16 @@ class Map<K, V> {
 	// for a key
 	private int getBucketIndex(K key, int choice)
 	{
-//		long startTime=System.nanoTime();
+		long startTime=System.nanoTime();
 		
 		int hashCode = hashCode(key, choice);
 		int index = hashCode % numBuckets;
 		// key.hashCode() could be negative.
 		index = index < 0 ? index * -1 : index;
 		
-//		long endTime=System.nanoTime();
-//		long elapsedTime=endTime-startTime;
-//		System.out.println(elapsedTime+"ns");
+		long endTime=System.nanoTime();
+		long elapsedTime=endTime-startTime;
+		System.out.println(elapsedTime+"ns");
 		
 		return index;
 	}
@@ -126,7 +126,7 @@ class Map<K, V> {
 			if (head.key.equals(key) && head.hashCode == hashCode) {
 				long endTime=System.nanoTime();
 				long elapsedTime=endTime-startTime;
-				System.out.println("get "+elapsedTime+"ns");
+				System.out.println(elapsedTime+"ns");
 				return head.value;
 			}
 				
@@ -138,10 +138,10 @@ class Map<K, V> {
 	}
 
 	// Adds a key value pair to hash
-	public void add(K key, int value, int choice)
+	public int add(K key, int value, int choice)
 	{
 		long startTime=System.nanoTime();
-
+		int collision = 0;
 		// Find head of chain for given key
 		int bucketIndex = getBucketIndex(key, choice);
 		int hashCode = hashCode(key, choice);
@@ -149,14 +149,15 @@ class Map<K, V> {
 
 		// Check if key is already present
 		while (head != null) {
+			collision++;
 			if (head.key.equals(key) && head.hashCode == hashCode) {
-				head.value += value; //change to head.value += value;?=============================here=====
+				head.value += value; 
 				
 				long endTime=System.nanoTime();
 				long elapsedTime=endTime-startTime;
-//				System.out.println("Add"+elapsedTime+"ns");
+				System.out.println(elapsedTime+"ns");
 				
-				return;
+				return 0;
 			}
 			head = head.next;
 		}
@@ -173,22 +174,25 @@ class Map<K, V> {
 		
 		long endTime=System.nanoTime();
 		long elapsedTime=endTime-startTime;
-//		System.out.println("insert in chain "+elapsedTime+"ns");
+		System.out.println(elapsedTime+"ns");
 		
+		return collision;
 			}
 	public void create(){
 		Map<String, Integer> map = new Map<>(0);
 	}
-	public void create(String[] input, Map<String, Integer> map, int choice){
-		long startTime=System.currentTimeMillis();
-		
+	public int create(String[] input, Map<String, Integer> map, int choice){
+		long startTime=System.nanoTime();
+		int collision = 0;
 		for(int i = 0 ; i < input.length;i++){
-			map.add(input[i],1,choice);
+			collision += map.add(input[i],1,choice);
 		}
-
-		long endTime=System.currentTimeMillis();
+		
+		long endTime=System.nanoTime();
 		long elapsedTime=endTime-startTime;
-		System.out.println("Create "+elapsedTime+"ms");
+		System.out.println(elapsedTime+"ns");
+		
+		return collision;
 	}
 
 }
