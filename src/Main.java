@@ -23,14 +23,15 @@ public class Main {
                 map2.create(test,map2,2);
                 System.out.println(map2.collisions);
                 map2.get(test[45],2);
-                map2.writeCountsToFile(String.format("Output n=10^%d k=%d fnv.txt",i,j),map2,test,3);
+                map2.writeCountsToFile(String.format("Output n=10^%d k=%d fnv.txt",i,j),map2,test,2);
 
                 System.out.println();
                 System.out.println("crc");
                 map3.create(test,map3,3);
                 System.out.println(map3.collisions);
-                map3.get(test[45],3);
                 map3.writeCountsToFile(String.format("Output n=10^%d k=%d crc.txt",i,j),map3,test,3);
+                map3.get(test[45],3);
+
                 bst.writeCountstoFile(String.format("Output n=10^%d k=%d bst.txt",i,j));
                 bst.destroy();
             }
