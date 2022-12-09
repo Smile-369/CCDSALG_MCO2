@@ -1,7 +1,6 @@
 import java.io.IOException;
-import java.util.Set;
 
-public class Store {
+public class Main {
     static Substring kmer=new Substring();
     static BinarySearchTree bst= new BinarySearchTree();
     static Map<String,Integer> map;
